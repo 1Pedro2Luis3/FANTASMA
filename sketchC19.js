@@ -1,7 +1,8 @@
-var Fantasma, FantasmaFim, espectro;
+var Fantasma, espectro;
 var torre, edificio;
 var janelas, windows;
 var sacada, grade;
+var End, FantasmaFim;
 var SomAssustador;
 
 var EstadoJogo = "INICIO";
@@ -10,26 +11,31 @@ var GJanela;
 var GSacada;
 
 function preload(){
-  espectro.loadAnimation("ghost-1.png", "ghost-2.png");
-  FantasmaFim.loadImage("gameOver.png");
-  edificio.loadImage("tower.png");
-  windows.loadImage("door.png");
-  grade.loadImage("climber.png");
-  SomAssustador.loadSound("spooky.wav");
+  espectro = loadAnimation("ghost-1.png", "ghost-2.png");
+  FantasmaFim = loadImage("gameOver.png");
+  edificio = loadImage("tower.png");
+  windows = loadImage("door.png");
+  grade = loadImage("climber.png");
+  SomAssustador = loadSound("spooky.wav");
 }
 
 function setup(){
   
   createCanvas(windowWidth,windowHeight);
-  
-  Fantasma = createSprite (Width-200, Height-50, 50, 50);
-  Fantasma.addAnimation("boo", espectro);
-  Fantasma.scale = 0.5;
 
-  torre = createSprite (Width-50, Height, 50, 50);
+  torre = createSprite (width/2, height/2, 50, 50);
   torre.addImage("prédio", edificio);
   torre.scale = 1.5;
   torre.velocityY = 3;
+
+  Fantasma = createSprite (width/2, height-80, 50, 50);
+  Fantasma.addAnimation("boo", espectro);
+  Fantasma.scale = 0.5;
+
+  End = createSprite (width/2, height/2, 50, 50);
+  End.addImage("lose",  FantasmaFim);
+  End.scale = 1;
+  End.visible = 0;
 
   GJanela = new Group();
   GSacada = new Group();
@@ -50,60 +56,78 @@ function draw(){
     text("Aperte ESPAÇO para fazer o fantasma flutuar", 200, 235);
     text("SETA PARA ESQUERDA move para a esquerda", 200, 250);
     text("SETA PARA DIREITA move para a direita", 200, 275);
-    
+
+    torre.visible = 0;
+    Fantasma.visible = 0;
+
     if(keyDown("enter")){
       EstadoJogo = "Gameplay";
     }
  }
 
   if(EstadoJogo === "Gameplay"){
-     Iniciar();
-     CriarObstaculos();
+    
+    torre.visible = 1;
+    Fantasma.visible = 1;
+    
+    Iniciar();
+    CriarObstaculos();
 
-    if(GSacada.isTouching(Fantasma)){
+    /**if(GSacada.isTouching(Fantasma)){
       EstadoJogo = "Fim";
-    }
+    }**/
  }
 
 
   if(EstadoJogo === "Fim"){
-    Fantasma.addImage("perdeu", FantasmaFim);
+    
+    End.visible = 1;
+
+    Fantasma.velocityY = 0;
     torre.velocityY = 0;
+  
     GSacada.destroyEach();
     GJanela.destroyEach();
   }
+
+  
 } 
 
 function Iniciar(){
   
-  if(torre.y > Height){
-    torre.y = torre.Height/2;
+  if(torre.y > height){
+    torre.y = torre.height/2;
   }
 
   if(keyDown("space")){
-    Fantasma.y -= 1;
+    Fantasma.velocityY -= 1;
   }
 
   if(keyDown("LEFT_ARROW")){
-    Fantasma.velocityX -= 1.5;
+    Fantasma.x -= 2.5;
   }
 
   if(keyDown("RIGHT_ARROW")){
-    Fantasma.velocityX += 1.5;
+    Fantasma.x += 2.5;
   }
+
+  Fantasma.velocityY += 0.5;
+
 }
 
 function CriarObstaculos(){
   if(frameCount%150 == 0){
-    janelas = createSprite(Math.round(random(50,500)), Height-500, 50, 50);
+    janelas = createSprite(Math.round(random(width/2 - 250, width/2 + 250)), height-500, 50, 50);
     janelas.addImage("vidro", windows);
+    janelas.scale = 0.7;
     janelas.velocityY = 3;
-    janelas.LifeTime = 150;
+    janelas.lifeTime = 150;
     
-    sacada = createSprite(janela.x, Height-470,50,50);
+    sacada = createSprite(janelas.x, height-465,50,50);
     sacada.addImage("madeira", grade);
+    sacada.scale = 0.7;
     sacada.velocityY = 3;
-    sacada.LifeTime = 150;
+    sacada.lifeTime = 150;
 
     GJanela.add(janelas);
     GSacada.add(sacada);
