@@ -28,7 +28,7 @@ function setup(){
   torre.scale = 1.5;
   torre.velocityY = 3;
 
-  Fantasma = createSprite (width/2, height-80, 50, 50);
+  Fantasma = createSprite (width/2, height-90, 50, 50);
   Fantasma.addAnimation("boo", espectro);
   Fantasma.scale = 0.5;
 
@@ -53,9 +53,9 @@ function draw(){
     textSize(20);
     fill("yellow");
     text("Pressione ENTER para começar", 200, 200);
-    text("Aperte ESPAÇO para fazer o fantasma flutuar", 200, 235);
-    text("SETA PARA ESQUERDA move para a esquerda", 200, 250);
-    text("SETA PARA DIREITA move para a direita", 200, 275);
+    text("Aperte ESPAÇO para fazer o fantasma flutuar", 200, 240);
+    text("SETA PARA ESQUERDA move para a esquerda", 200, 280);
+    text("SETA PARA DIREITA move para a direita", 200, 320);
 
     torre.visible = 0;
     Fantasma.visible = 0;
@@ -73,15 +73,20 @@ function draw(){
     Iniciar();
     CriarObstaculos();
 
-    /**if(GSacada.isTouching(Fantasma)){
+    if(GSacada.isTouching(Fantasma)){
       EstadoJogo = "Fim";
-    }**/
+    }
+
+    if(Fantasma.x > 800){
+      EstadoJogo = "Fim";
+    }
  }
 
 
   if(EstadoJogo === "Fim"){
     
     End.visible = 1;
+    Fantasma.visible = 0;
 
     Fantasma.velocityY = 0;
     torre.velocityY = 0;
@@ -89,9 +94,7 @@ function draw(){
     GSacada.destroyEach();
     GJanela.destroyEach();
   }
-
-  
-} 
+}
 
 function Iniciar(){
   
@@ -112,20 +115,20 @@ function Iniciar(){
   }
 
   Fantasma.velocityY += 0.5;
-
 }
+
 
 function CriarObstaculos(){
   if(frameCount%150 == 0){
-    janelas = createSprite(Math.round(random(width/2 - 250, width/2 + 250)), height-500, 50, 50);
+    janelas = createSprite(Math.round(random(width/2 - 250, width/2 + 250)), height-600, 50, 50);
     janelas.addImage("vidro", windows);
-    janelas.scale = 0.7;
+    janelas.scale = 1;
     janelas.velocityY = 3;
     janelas.lifeTime = 150;
     
-    sacada = createSprite(janelas.x, height-465,50,50);
+    sacada = createSprite(janelas.x, height-540,50,50);
     sacada.addImage("madeira", grade);
-    sacada.scale = 0.7;
+    sacada.scale = 1;
     sacada.velocityY = 3;
     sacada.lifeTime = 150;
 
